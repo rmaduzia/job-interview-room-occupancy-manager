@@ -78,7 +78,7 @@ Use the following raw JSON file/structure as mock data for potential guests in y
 Before you begin, ensure you have the following software installed:
 
 - Java 17 or higher
-- Maven 3.6.0 or higher
+- Maven 3.9.6 or higher
 - Git (optional, for cloning the repository)
 
 ## Setup
@@ -92,15 +92,16 @@ Before you begin, ensure you have the following software installed:
 ## Build the project:
 ```
 mvn clean install
-
+```
 
 ## Running Tests
+```
 mvn test
-
+```
 ## Running the Application
 ```
 mvn spring-boot:run
-
+```
 
 
 
@@ -132,3 +133,8 @@ mvn spring-boot:run
 }
 ```
 
+
+## Swagger
+You can access the Swagger UI for this API at:
+
+http://localhost:8080/swagger-ui/index.html
