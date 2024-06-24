@@ -1,4 +1,4 @@
-package com.example.room_occupancy_manager.ocuppancy;
+package com.example.room.occupancy.manager.ocuppancy;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

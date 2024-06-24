@@ -1,9 +1,9 @@
-package com.example.room_occupancy_manager;
+package com.example.room.occupancy.manager;
 
-import com.example.room_occupancy_manager.ocuppancy.CalculateOccupancyRequest;
-import com.example.room_occupancy_manager.ocuppancy.OccupancyController;
-import com.example.room_occupancy_manager.ocuppancy.OccupancyService;
-import com.example.room_occupancy_manager.ocuppancy.OccupancyResult;
+import com.example.room.occupancy.manager.ocuppancy.CalculateOccupancyRequest;
+import com.example.room.occupancy.manager.ocuppancy.OccupancyController;
+import com.example.room.occupancy.manager.ocuppancy.OccupancyResult;
+import com.example.room.occupancy.manager.ocuppancy.OccupancyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

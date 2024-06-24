@@ -1,10 +1,10 @@
-package com.example.room_occupancy_manager;
+package com.example.room.occupancy.manager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.room_occupancy_manager.ocuppancy.CalculateOccupancyRequest;
-import com.example.room_occupancy_manager.ocuppancy.OccupancyResult;
-import com.example.room_occupancy_manager.ocuppancy.OccupancyService;
+import com.example.room.occupancy.manager.ocuppancy.OccupancyResult;
+import com.example.room.occupancy.manager.ocuppancy.OccupancyService;
+import com.example.room.occupancy.manager.ocuppancy.CalculateOccupancyRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;

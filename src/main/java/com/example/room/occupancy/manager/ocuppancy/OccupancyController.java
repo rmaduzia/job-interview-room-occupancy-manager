@@ -1,4 +1,4 @@
-package com.example.room_occupancy_manager.ocuppancy;
+package com.example.room.occupancy.manager.ocuppancy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

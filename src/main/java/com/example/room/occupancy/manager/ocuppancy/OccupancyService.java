@@ -1,9 +1,10 @@
-package com.example.room_occupancy_manager.ocuppancy;
+package com.example.room.occupancy.manager.ocuppancy;
 
-import com.example.room_occupancy_manager.domain.Guest;
+import com.example.room.occupancy.manager.domain.Guest;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
 
 @Service
 public class OccupancyService {
@@ -13,7 +14,7 @@ public class OccupancyService {
     public OccupancyResult optimizeOccupancy (CalculateOccupancyRequest calculateOccupancyRequest) {
 
         List<Guest> sortedGuests = calculateOccupancyRequest.getGuestPayments().stream().map(Guest::new)
-            .sorted((g1, g2) -> Double.compare(g2.willingnessToPay(), g1.willingnessToPay()))
+            .sorted(Comparator.comparingDouble(Guest::willingnessToPay).reversed())
             .toList();
 
         int usedPremiumRooms = 0;
