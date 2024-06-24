@@ -1,5 +1,8 @@
-package com.example.room.occupancy.manager.ocuppancy;
+package room.occupancy.manager.ocuppancy.controller;
 
+import room.occupancy.manager.ocuppancy.dto.CalculateOccupancyRequest;
+import room.occupancy.manager.ocuppancy.dto.OccupancyResult;
+import room.occupancy.manager.ocuppancy.service.OccupancyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

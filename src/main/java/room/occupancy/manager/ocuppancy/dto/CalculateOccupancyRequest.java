@@ -1,4 +1,4 @@
-package com.example.room.occupancy.manager.ocuppancy;
+package room.occupancy.manager.ocuppancy.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;

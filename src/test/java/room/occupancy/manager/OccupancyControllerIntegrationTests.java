@@ -1,36 +1,35 @@
-package com.example.room.occupancy.manager;
+package room.occupancy.manager;
 
-import com.example.room.occupancy.manager.ocuppancy.CalculateOccupancyRequest;
-import com.example.room.occupancy.manager.ocuppancy.OccupancyController;
-import com.example.room.occupancy.manager.ocuppancy.OccupancyResult;
-import com.example.room.occupancy.manager.ocuppancy.OccupancyService;
+import room.occupancy.manager.ocuppancy.dto.CalculateOccupancyRequest;
+import room.occupancy.manager.ocuppancy.dto.OccupancyResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(OccupancyController.class)
-public class OccupancyControllerTests {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class OccupancyControllerIntegrationTests {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private OccupancyService occupancyService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -39,6 +38,7 @@ public class OccupancyControllerTests {
 
     @BeforeEach
     public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         payments = Arrays.asList(23.0, 45.0, 155.0, 374.0, 22.0, 99.99, 100.0, 101.0, 115.0, 209.0);
     }
 
@@ -48,30 +48,26 @@ public class OccupancyControllerTests {
         CalculateOccupancyRequest request = new CalculateOccupancyRequest(premiumRooms, economyRooms, payments);
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
-        when(occupancyService.optimizeOccupancy(request)).thenReturn(expectedResult);
-
         mockMvc.perform(post("/api/occupancy")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
     }
 
     @Test
     public void testOptimizeOccupancyWithVariousRequests() throws Exception {
-        testOptimizeOccupancy(3, 3, new OccupancyResult(3, 3, 1153.0, 189.99));
+        testOptimizeOccupancy(3, 3, new OccupancyResult(3, 3, 738.0, 167.99));
         testOptimizeOccupancy(7, 5, new OccupancyResult(6, 4, 1054.0, 189.99));
         testOptimizeOccupancy(2, 7, new OccupancyResult(2, 4, 583.0, 189.99));
-        testOptimizeOccupancy(7, 1, new OccupancyResult(7, 1, 1153.0, 189.99));
+        testOptimizeOccupancy(7, 1, new OccupancyResult(7, 1, 1153.99, 45.0));
     }
-
 
     @Test
     public void testNegativeEconomyRooms() throws Exception {
         CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, -1, payments);
-        performPostAndExpectBadRequest(request,"{\"economyRooms\":\"You can't have negative numbers of economy rooms\"}");
+        performPostAndExpectBadRequest(request, "{\"economyRooms\":\"You can't have negative numbers of economy rooms\"}");
     }
-
 
     @Test
     public void testNullGuestPayments() throws Exception {
@@ -85,22 +81,10 @@ public class OccupancyControllerTests {
         performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be empty\"}");
     }
 
-    @Test
-    public void testServiceError() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, payments);
-        doThrow(new RuntimeException("Service error")).when(occupancyService).optimizeOccupancy(request);
-
+    private void performPostAndExpectBadRequest(CalculateOccupancyRequest request, String expectedErrorMessage) throws Exception {
         mockMvc.perform(post("/api/occupancy")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isInternalServerError())
-            .andExpect(content().string("Error while processing. Please contact with us via contact form."));
-    }
-
-    private void performPostAndExpectBadRequest(CalculateOccupancyRequest request, String expectedErrorMessage) throws Exception{
-        mockMvc.perform(post("/api/occupancy")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(expectedErrorMessage));
     }

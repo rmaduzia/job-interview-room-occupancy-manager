@@ -1,4 +1,4 @@
-package com.example.room.occupancy.manager.ocuppancy;
+package room.occupancy.manager.ocuppancy.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

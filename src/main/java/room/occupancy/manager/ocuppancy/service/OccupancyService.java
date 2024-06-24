@@ -1,6 +1,8 @@
-package com.example.room.occupancy.manager.ocuppancy;
+package room.occupancy.manager.ocuppancy.service;
 
-import com.example.room.occupancy.manager.domain.Guest;
+import room.occupancy.manager.ocuppancy.dto.CalculateOccupancyRequest;
+import room.occupancy.manager.ocuppancy.dto.Guest;
+import room.occupancy.manager.ocuppancy.dto.OccupancyResult;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
