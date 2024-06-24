@@ -13,37 +13,56 @@ public class OccupancyService {
 
     public OccupancyResult optimizeOccupancy (CalculateOccupancyRequest calculateOccupancyRequest) {
 
-        List<Guest> sortedGuests = calculateOccupancyRequest.getGuestPayments().stream().map(Guest::new)
+        List<Guest> guestedSortedByWillingnessToPay = calculateOccupancyRequest.getGuestPayments().stream().map(Guest::new)
             .sorted(Comparator.comparingDouble(Guest::willingnessToPay).reversed())
             .toList();
 
-        int usedPremiumRooms = 0;
-        int usedEconomyRooms = 0;
-        double totalPremiumEarnings = 0;
-        double totalEconomyEarnings = 0;
+        OccupancyStats premiumStats = new OccupancyStats();
+        OccupancyStats economyStats = new OccupancyStats();
 
         List<Guest> economyGuests = new ArrayList<>();
 
-        for (Guest guest : sortedGuests) {
-            if (guest.willingnessToPay() >= PREMIUM_THRESHOLD && usedPremiumRooms < calculateOccupancyRequest.getPremiumRooms()) {
-                usedPremiumRooms++;
-                totalPremiumEarnings += guest.willingnessToPay();
+        assignPremiumGuests(guestedSortedByWillingnessToPay, calculateOccupancyRequest.getPremiumRooms(), premiumStats, economyGuests);
+        assignEconomyGuests(economyGuests, calculateOccupancyRequest, premiumStats, economyStats);
+
+        return new OccupancyResult(
+            premiumStats.roomsOccupied,
+            economyStats.roomsOccupied,
+            premiumStats.totalEarnings,
+            economyStats.totalEarnings
+        );
+
+    }
+
+    private void assignPremiumGuests(List<Guest> guests, int availablePremiumRooms, OccupancyStats premiumStats, List<Guest> economyGuests) {
+        for (Guest guest : guests) {
+            if (guest.willingnessToPay() >= PREMIUM_THRESHOLD && premiumStats.roomsOccupied < availablePremiumRooms) {
+                premiumStats.roomsOccupied++;
+                premiumStats.totalEarnings += guest.willingnessToPay();
             } else if (guest.willingnessToPay() < PREMIUM_THRESHOLD) {
                 economyGuests.add(guest);
             }
         }
+    }
+
+    private void assignEconomyGuests(List<Guest> economyGuests, CalculateOccupancyRequest request, OccupancyStats premiumStats, OccupancyStats economyStats) {
+
+        int availablePremiumRooms = request.getPremiumRooms();
+        int availableEconomyRooms = request.getEconomyRooms();
 
         for (Guest guest : economyGuests) {
-            if (usedPremiumRooms < calculateOccupancyRequest.getPremiumRooms() && economyGuests.size() > calculateOccupancyRequest.getEconomyRooms()) {
-                usedPremiumRooms++;
-                totalPremiumEarnings += guest.willingnessToPay();
-            } else if (usedEconomyRooms < calculateOccupancyRequest.getEconomyRooms()) {
-                usedEconomyRooms++;
-                totalEconomyEarnings += guest.willingnessToPay();
+            if (premiumStats.roomsOccupied < availablePremiumRooms && economyGuests.size() > availableEconomyRooms) {
+                premiumStats.roomsOccupied++;
+                premiumStats.totalEarnings += guest.willingnessToPay();
+            } else if (economyStats.roomsOccupied < availableEconomyRooms) {
+                economyStats.roomsOccupied++;
+                economyStats.totalEarnings += guest.willingnessToPay();
             }
         }
+    }
 
-            return new OccupancyResult(usedPremiumRooms, usedEconomyRooms, totalPremiumEarnings,
-                totalEconomyEarnings);
+    private static class OccupancyStats {
+        int roomsOccupied = 0;
+        double totalEarnings = 0;
     }
 }
