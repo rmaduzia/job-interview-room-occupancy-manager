@@ -104,8 +104,18 @@ mvn spring-boot:run
 ```
 
 
+## Docker - Running the Application 
+```
+mvn clean install
+docker build --tag=room-occupancy-manager:latest .
+docker run -p 8080:8080 room-occupancy-manager:latest
+```
 
-
+## Docker-Compose - Running the Application 
+```
+mvn clean install
+docker-compose up -d 
+```
 
 
 ## Endpoints
