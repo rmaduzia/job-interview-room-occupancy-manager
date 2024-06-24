@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  room-occupancy-manager:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: room-occupancy-manager
+    ports:
+      - "8080:8080"
+    image: room-occupancy-manager:latest
