@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +35,8 @@ public class OccupancyControllerTests {
     private ObjectMapper objectMapper;
 
     List<Double> payments;
+
+    CalculateOccupancyRequest request;
 
     @BeforeEach
     public void setUp() {
@@ -68,26 +69,26 @@ public class OccupancyControllerTests {
 
     @Test
     public void testNegativeEconomyRooms() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, -1, payments);
+        request = new CalculateOccupancyRequest(3, -1, payments);
         performPostAndExpectBadRequest(request,"{\"economyRooms\":\"You can't have negative numbers of economy rooms\"}");
     }
 
 
     @Test
     public void testNullGuestPayments() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, null);
-        performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be null\"}");
+        request = new CalculateOccupancyRequest(3, 3, null);
+        performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be empty\"}");
     }
 
     @Test
     public void testEmptyGuestPayments() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, Collections.emptyList());
+        request = new CalculateOccupancyRequest(3, 3, Collections.emptyList());
         performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be empty\"}");
     }
 
     @Test
     public void testServiceError() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, payments);
+        request = new CalculateOccupancyRequest(3, 3, payments);
         doThrow(new RuntimeException("Service error")).when(occupancyService).optimizeOccupancy(request);
 
         mockMvc.perform(post("/api/occupancy")

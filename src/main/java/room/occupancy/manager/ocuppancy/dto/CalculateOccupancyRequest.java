@@ -20,7 +20,7 @@ public class CalculateOccupancyRequest {
     @Min(value = 0, message = "You can't have negative numbers of economy rooms")
     private int economyRooms;
 
-    @NotNull(message = "Guest payments cannot be null")
+    @NotNull(message = "Guest payments cannot be empty")
     @NotEmpty(message = "Guest payments cannot be empty")
     private List<Double> guestPayments;
 }

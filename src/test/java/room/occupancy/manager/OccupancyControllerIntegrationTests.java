@@ -36,6 +36,8 @@ public class OccupancyControllerIntegrationTests {
 
     List<Double> payments;
 
+    CalculateOccupancyRequest request;
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -45,7 +47,7 @@ public class OccupancyControllerIntegrationTests {
     private void testOptimizeOccupancy(int premiumRooms, int economyRooms, OccupancyResult expectedResult)
         throws Exception {
 
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(premiumRooms, economyRooms, payments);
+        request = new CalculateOccupancyRequest(premiumRooms, economyRooms, payments);
         String expectedJson = objectMapper.writeValueAsString(expectedResult);
 
         mockMvc.perform(post("/api/occupancy")
@@ -65,19 +67,19 @@ public class OccupancyControllerIntegrationTests {
 
     @Test
     public void testNegativeEconomyRooms() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, -1, payments);
+        request = new CalculateOccupancyRequest(3, -1, payments);
         performPostAndExpectBadRequest(request, "{\"economyRooms\":\"You can't have negative numbers of economy rooms\"}");
     }
 
     @Test
     public void testNullGuestPayments() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, null);
-        performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be null\"}");
+        request = new CalculateOccupancyRequest(3, 3, null);
+        performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be empty\"}");
     }
 
     @Test
     public void testEmptyGuestPayments() throws Exception {
-        CalculateOccupancyRequest request = new CalculateOccupancyRequest(3, 3, Collections.emptyList());
+        request = new CalculateOccupancyRequest(3, 3, Collections.emptyList());
         performPostAndExpectBadRequest(request, "{\"guestPayments\":\"Guest payments cannot be empty\"}");
     }
 
