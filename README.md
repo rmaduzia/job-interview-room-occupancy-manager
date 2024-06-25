@@ -86,8 +86,8 @@ Before you begin, ensure you have the following software installed:
 1. **Clone the repository (if applicable):**
 
    ```sh
-   git clone https://github.com/your-repo/room-occupancy-manager.git
-   cd room-occupancy-manager
+   git clone git@github.com:rmaduzia/job-interview-room-occupancy-manager.git
+   cd job-interview-room-occupancy-manager
 
 ## Build the project:
 ```
