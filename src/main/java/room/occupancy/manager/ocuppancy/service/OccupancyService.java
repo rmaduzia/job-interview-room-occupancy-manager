@@ -1,5 +1,6 @@
 package room.occupancy.manager.ocuppancy.service;
 
+import java.math.BigDecimal;
 import room.occupancy.manager.ocuppancy.dto.CalculateOccupancyRequest;
 import room.occupancy.manager.ocuppancy.dto.Guest;
 import room.occupancy.manager.ocuppancy.dto.OccupancyResult;
@@ -11,12 +12,12 @@ import java.util.Comparator;
 @Service
 public class OccupancyService {
 
-    private static final double PREMIUM_THRESHOLD = 100.0;
+    private static final BigDecimal PREMIUM_THRESHOLD = new BigDecimal("100");
 
     public OccupancyResult optimizeOccupancy (CalculateOccupancyRequest calculateOccupancyRequest) {
 
         List<Guest> guestedSortedByWillingnessToPay = calculateOccupancyRequest.getGuestPayments().stream().map(Guest::new)
-            .sorted(Comparator.comparingDouble(Guest::willingnessToPay).reversed())
+            .sorted(Comparator.comparing(Guest::willingnessToPay).reversed())
             .toList();
 
         OccupancyStats premiumStats = new OccupancyStats();
@@ -33,15 +34,14 @@ public class OccupancyService {
             premiumStats.totalEarnings,
             economyStats.totalEarnings
         );
-
     }
 
     private void assignPremiumGuests(List<Guest> guests, int availablePremiumRooms, OccupancyStats premiumStats, List<Guest> economyGuests) {
         for (Guest guest : guests) {
-            if (guest.willingnessToPay() >= PREMIUM_THRESHOLD && premiumStats.roomsOccupied < availablePremiumRooms) {
+            if (guest.willingnessToPay().compareTo(PREMIUM_THRESHOLD) >= 0 && premiumStats.roomsOccupied < availablePremiumRooms) {
                 premiumStats.roomsOccupied++;
-                premiumStats.totalEarnings += guest.willingnessToPay();
-            } else if (guest.willingnessToPay() < PREMIUM_THRESHOLD) {
+                premiumStats.totalEarnings = premiumStats.totalEarnings.add(guest.willingnessToPay());
+            } else if (guest.willingnessToPay().compareTo(PREMIUM_THRESHOLD) < 0) {
                 economyGuests.add(guest);
             }
         }
@@ -55,16 +55,16 @@ public class OccupancyService {
         for (Guest guest : economyGuests) {
             if (premiumStats.roomsOccupied < availablePremiumRooms && economyGuests.size() > availableEconomyRooms) {
                 premiumStats.roomsOccupied++;
-                premiumStats.totalEarnings += guest.willingnessToPay();
+                premiumStats.totalEarnings = premiumStats.totalEarnings.add(guest.willingnessToPay());
             } else if (economyStats.roomsOccupied < availableEconomyRooms) {
                 economyStats.roomsOccupied++;
-                economyStats.totalEarnings += guest.willingnessToPay();
+                economyStats.totalEarnings = economyStats.totalEarnings.add(guest.willingnessToPay());
             }
         }
     }
 
     private static class OccupancyStats {
         int roomsOccupied = 0;
-        double totalEarnings = 0;
+        BigDecimal totalEarnings = BigDecimal.valueOf(0);
     }
 }

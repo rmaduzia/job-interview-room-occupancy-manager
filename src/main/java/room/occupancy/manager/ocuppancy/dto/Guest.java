@@ -1,5 +1,7 @@
 package room.occupancy.manager.ocuppancy.dto;
 
-public record Guest(double willingnessToPay) {
+import java.math.BigDecimal;
+
+public record Guest(BigDecimal willingnessToPay) {
 
 }

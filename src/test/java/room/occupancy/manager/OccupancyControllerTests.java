@@ -1,5 +1,6 @@
 package room.occupancy.manager;
 
+import java.math.BigDecimal;
 import room.occupancy.manager.ocuppancy.dto.CalculateOccupancyRequest;
 import room.occupancy.manager.ocuppancy.controller.OccupancyController;
 import room.occupancy.manager.ocuppancy.dto.OccupancyResult;
@@ -34,13 +35,15 @@ public class OccupancyControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    List<Double> payments;
+    List<BigDecimal> payments;
 
     CalculateOccupancyRequest request;
 
     @BeforeEach
     public void setUp() {
-        payments = Arrays.asList(23.0, 45.0, 155.0, 374.0, 22.0, 99.99, 100.0, 101.0, 115.0, 209.0);
+        payments = Arrays.asList(new BigDecimal("23.0"), new BigDecimal("45.0"), new BigDecimal("155.0"),
+            new BigDecimal("374.0"), new BigDecimal("22.0"), new BigDecimal("99.99"), new BigDecimal("100.0"),
+            new BigDecimal("101.0"), new BigDecimal("115.0"), new BigDecimal("209.0"));
     }
 
     private void testOptimizeOccupancy(int premiumRooms, int economyRooms, OccupancyResult expectedResult)
@@ -60,10 +63,10 @@ public class OccupancyControllerTests {
 
     @Test
     public void testOptimizeOccupancyWithVariousRequests() throws Exception {
-        testOptimizeOccupancy(3, 3, new OccupancyResult(3, 3, 1153.0, 189.99));
-        testOptimizeOccupancy(7, 5, new OccupancyResult(6, 4, 1054.0, 189.99));
-        testOptimizeOccupancy(2, 7, new OccupancyResult(2, 4, 583.0, 189.99));
-        testOptimizeOccupancy(7, 1, new OccupancyResult(7, 1, 1153.0, 189.99));
+        testOptimizeOccupancy(3, 3, new OccupancyResult(3, 3, new BigDecimal("1153.0"), new BigDecimal("189.99")));
+        testOptimizeOccupancy(7, 5, new OccupancyResult(6, 4, new BigDecimal("1054.0"), new BigDecimal("189.99")));
+        testOptimizeOccupancy(2, 7, new OccupancyResult(2, 4, new BigDecimal("583.0"), new BigDecimal("189.99")));
+        testOptimizeOccupancy(7, 1, new OccupancyResult(7, 1, new BigDecimal("1153.0"), new BigDecimal("189.99")));
     }
 
 

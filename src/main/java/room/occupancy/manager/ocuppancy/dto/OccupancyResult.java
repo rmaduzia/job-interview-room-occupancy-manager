@@ -1,6 +1,8 @@
 package room.occupancy.manager.ocuppancy.dto;
 
+import java.math.BigDecimal;
+
 public record OccupancyResult(int usedPremiumRooms, int usedEconomyRooms,
-                              double totalPremiumEarnings, double totalEconomyEarnings) {
+                              BigDecimal totalPremiumEarnings, BigDecimal totalEconomyEarnings) {
 
 }

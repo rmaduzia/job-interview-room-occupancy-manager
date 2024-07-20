@@ -3,6 +3,7 @@ package room.occupancy.manager.ocuppancy.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,5 +23,5 @@ public class CalculateOccupancyRequest {
 
     @NotNull(message = "Guest payments cannot be empty")
     @NotEmpty(message = "Guest payments cannot be empty")
-    private List<Double> guestPayments;
+    private List<BigDecimal> guestPayments;
 }
